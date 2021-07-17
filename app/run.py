@@ -14,10 +14,15 @@ from sqlalchemy import create_engine
 
 app = Flask(__name__)
 
-# Initializing a tokenizing function
-# This function will apply a a value for the words on our text,
-# As well as getting all words to lowercase and remove the spaces between them.
+
 def tokenize(text):
+    '''
+    Input: Text
+    Output: clean_tokens
+
+    Custom method created for tokenizing text data,
+    After the input, tokenize text words, lemmatize it and returns clean tokens
+    '''
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 

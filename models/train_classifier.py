@@ -15,6 +15,15 @@ import pickle
 
 
 def load_data(database_filepath):
+    '''
+    input: database_filepath
+    Output: X, Y
+
+    custom function to load data from the database,
+    creates an engine with: sqlalchemy create_engine,
+    converts to a DataFrame,
+    Extract X and Y and returns it.
+    '''
     engine = create_engine(database_filepath)
     df = pd.read_sql_table('disaster', engine)
     X = df['message']
@@ -22,6 +31,14 @@ def load_data(database_filepath):
     return X, Y
 
 def tokenize(text):
+    '''
+    Input: Text
+    Output: clean_tokens
+
+    Custom method created for tokenizing text data,
+    After the input, tokenize text words, lemmatize it and returns clean tokens
+    '''
+
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
     
@@ -29,10 +46,26 @@ def tokenize(text):
     for tok in tokens:
         clean_tok = lemmatizer.lemmatize(tok).lower().strip()
         clean_tokens.append(clean_tok)
+
     return clean_tokens
 
 
 def build_model():
+    '''
+    Input: None
+    Output: CV
+
+    Custom function created for instantiating a model with a pipeline.
+    tokenizer equals to the tokenize function.
+    Pipeline receives: CountVectorizer, TfidfTransformer and MultiOutputClassifier
+    MultiOutputClassifier receives a RandomForestClassifier to prediction.
+
+    parameters = {
+    'clf__estimator__criterion':['gini', 'entropy'],
+    'clf__estimator__n_estimators':[50,100]
+    }  
+    '''
+
     pipeline = Pipeline([
                 ('vect', CountVectorizer(tokenizer = tokenize)),
                 ('tfidf', TfidfTransformer()),
@@ -50,6 +83,11 @@ def build_model():
     return cv
 
 def evaluate_model(model, X_test, Y_test):
+    '''
+    Input: model, X_test, Y_test
+
+    Output: Classification report for each cathegory predicted.
+    '''
     categories = Y_test.columns.tolist()
     y_pred = model.predict(X_test)
     y_pred = pd.DataFrame(y_pred, columns=categories)
@@ -60,6 +98,13 @@ def evaluate_model(model, X_test, Y_test):
 
 
 def save_model(model, model_filepath):
+    '''
+    Input: model, model_filepath
+    Output: None
+
+    Saves the trained model on it's defined filepath using pickle
+    '''
+
     with open(model_filepath, 'wb') as picklepath:
         pickle.dump(model, picklepath)
         picklepath.close()
