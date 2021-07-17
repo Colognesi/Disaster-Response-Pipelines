@@ -24,8 +24,11 @@ def load_data(database_filepath):
     converts to a DataFrame,
     Extract X and Y and returns it.
     '''
-    engine = create_engine(database_filepath)
-    df = pd.read_sql_table('disaster', engine)
+
+    engine = create_engine('sqlite:///{}'.format(database_filepath))
+
+    df = pd.read_sql_table('Disaster', engine)
+
     X = df['message']
     Y = df.iloc[: ,3:]
     return X, Y
@@ -65,7 +68,7 @@ def build_model():
     'clf__estimator__n_estimators':[50,100]
     }  
     '''
-
+    # Creating pipeline
     pipeline = Pipeline([
                 ('vect', CountVectorizer(tokenizer = tokenize)),
                 ('tfidf', TfidfTransformer()),
@@ -78,6 +81,7 @@ def build_model():
     'clf__estimator__n_estimators':[50,100]
     }
 
+    # creating a cv object for best parameters.
     cv = GridSearchCV(pipeline, param_grid = parameters, n_jobs = -1, verbose = 2, cv = 2)
 
     return cv
@@ -114,7 +118,7 @@ def main():
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
-        X, Y, category_names = load_data(database_filepath)
+        X, Y = load_data(database_filepath)
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
         
         print('Building model...')
@@ -124,7 +128,7 @@ def main():
         model.fit(X_train, Y_train)
         
         print('Evaluating model...')
-        evaluate_model(model, X_test, Y_test, category_names)
+        evaluate_model(model, X_test, Y_test)
 
         print('Saving model...\n    MODEL: {}'.format(model_filepath))
         save_model(model, model_filepath)
