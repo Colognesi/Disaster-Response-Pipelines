@@ -49,6 +49,16 @@ def clean_data(df):
     df.drop_duplicates(subset = ['message', 'original'], inplace = True)
     df.drop('original', axis = 1, inplace = True)
 
+    # drop related column values != 1 and != 0
+    df.reset_index(drop = True, inplace = True)
+
+    list_for_drop = []
+    for i, values in enumerate(df['related']):
+        if values == 2:
+            list_for_drop.append(i)
+            
+    df.drop(list_for_drop, axis = 0, inplace = True)
+
     return df
 
 def save_data(df, database_filename):
