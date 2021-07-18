@@ -38,7 +38,7 @@ engine = create_engine('sqlite:///Data/Loaded/DisasterResponse.db')
 df = pd.read_sql_table('Disaster', engine)
 
 # load model
-with open('Data/Loaded/ML_model.pickle', 'rb') as picklefile:
+with open('Data/Loaded/ML_Model.pkl', 'rb') as picklefile:
     model = pickle.load(picklefile)
 
 
