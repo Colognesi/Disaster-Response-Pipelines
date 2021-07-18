@@ -13,7 +13,7 @@ app {
     master.html
   }
   run.py
-}</code>
+}
 
 Data {
   Loaded {
